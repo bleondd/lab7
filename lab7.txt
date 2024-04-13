@@ -1,0 +1,112 @@
+
+2. Tạo bảng:
+
+```sql
+CREATE TABLE DanhBa (
+    HoTen VARCHAR(255),
+    DiaChi VARCHAR(255),
+    SoDienThoai VARCHAR(15),
+    NgaySinh DATE
+);
+```
+
+3. Thêm dữ liệu vào bảng:
+
+```sql
+INSERT INTO DanhBa (HoTen, DiaChi, SoDienThoai, NgaySinh) VALUES
+('Nguyễn Văn An', '111 Nguyễn Trãi, Thanh Xuân, Hà Nội', '987654321', '1987-11-18'),
+('Nguyễn Văn An', '111 Nguyễn Trãi, Thanh Xuân, Hà Nội', '09873452', '1987-11-18'),
+('Nguyễn Văn An', '111 Nguyễn Trãi, Thanh Xuân, Hà Nội', '09832323', '1987-11-18'),
+('Nguyễn Văn An', '111 Nguyễn Trãi, Thanh Xuân, Hà Nội', '09434343', '1987-11-18');
+```
+
+4. Truy vấn:
+a) Liệt kê danh sách người trong danh bạ:
+```sql
+SELECT DISTINCT HoTen FROM DanhBa;
+```
+
+b) Liệt kê danh sách số điện thoại có trong danh bạ:
+```sql
+SELECT SoDienThoai FROM DanhBa;
+```
+
+5. Truy vấn:
+a) Liệt kê danh sách người trong danh bạ theo thứ tự alphabet:
+```sql
+SELECT * FROM DanhBa ORDER BY HoTen;
+```
+
+b) Liệt kê các số điện thoại của người có tên là Nguyễn Văn An:
+```sql
+SELECT SoDienThoai FROM DanhBa WHERE HoTen = 'Nguyễn Văn An';
+```
+
+c) Liệt kê những người có ngày sinh là '1987-12-09':
+```sql
+SELECT * FROM DanhBa WHERE NgaySinh = '1987-12-09';
+```
+
+6. Truy vấn:
+a) Số lượng số điện thoại của mỗi người trong danh bạ:
+```sql
+SELECT HoTen, COUNT(SoDienThoai) AS SoLuongSoDienThoai FROM DanhBa GROUP BY HoTen;
+```
+
+b) Tổng số người trong danh bạ sinh vào tháng 12:
+```sql
+SELECT COUNT(*) AS TongSoNguoi FROM DanhBa WHERE MONTH(NgaySinh) = 12;
+```
+
+c) Hiển thị toàn bộ thông tin về người, của từng số điện thoại:
+```sql
+SELECT * FROM DanhBa ORDER BY HoTen, SoDienThoai;
+```
+
+d) Hiển thị toàn bộ thông tin về người, của số điện thoại '123456789':
+```sql
+SELECT * FROM DanhBa WHERE SoDienThoai = '123456789';
+```
+
+7. Thay đổi dữ liệu:
+a) Thay đổi trường NgaySinh là trước ngày hiện tại:
+```sql
+UPDATE DanhBa SET NgaySinh = '1990-01-01' WHERE NgaySinh > CURDATE();
+```
+
+b) Xác định các trường khóa chính và khóa ngoại của bảng:
+Trong trường hợp này, không có trường khóa chính hoặc khóa ngoại được định nghĩa.
+
+c) Thêm trường NgayBatDauLienLac:
+```sql
+ALTER TABLE DanhBa ADD NgayBatDauLienLac DATE;
+```
+
+8. Chỉ mục và View, Stored Procedure:
+a) Thêm chỉ mục:
+```sql
+CREATE INDEX IX_HoTen ON DanhBa(HoTen);
+CREATE INDEX IX_SoDienThoai ON DanhBa(SoDienThoai);
+```
+
+b) Tạo View:
+```sql
+CREATE VIEW View_SoDienThoai AS
+SELECT HoTen, SoDienThoai FROM DanhBa;
+
+CREATE VIEW View_SinhNhat AS
+SELECT HoTen, NgaySinh, SoDienThoai FROM DanhBa WHERE MONTH(NgaySinh) = MONTH(CURDATE());
+```
+
+c) Stored Procedures:
+```sql
+CREATE PROCEDURE SP_Them_DanhBa(IN p_HoTen VARCHAR(255), IN p_DiaChi VARCHAR(255), IN p_SoDienThoai VARCHAR(15), IN p_NgaySinh DATE)
+BEGIN
+    INSERT INTO DanhBa (HoTen, DiaChi, SoDienThoai, NgaySinh) VALUES (p_HoTen, p_DiaChi, p_SoDienThoai, p_NgaySinh);
+END;
+
+CREATE PROCEDURE SP_Tim_DanhBa(IN p_Ten VARCHAR(255))
+BEGIN
+    SELECT * FROM DanhBa WHERE HoTen LIKE CONCAT('%', p_Ten, '%');
+END;
+```
